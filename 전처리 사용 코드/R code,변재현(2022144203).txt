@@ -1,0 +1,205 @@
+library(dplyr)
+library(MASS)
+comp<-read.csv("C:\\Users\\82109\\Desktop/만들어진 Financial Dataset.csv",na.strings=c("","NA"))
+comp
+str(comp)
+#comp$Revenue<-as.numeric(comp$Revenue)
+#comp$Expenses<-as.numeric(comp$Expenses)
+#comp$Growth<-as.numeric(comp$Growth)
+str(comp)
+#속성 변환
+comp$Revenue<-gsub("\\$","",comp$Revenue)
+comp$Revenue<-gsub(",","",comp$Revenue)f
+comp$Expenses<-gsub("Dollars","",comp$Expenses)
+comp$Expenses<-gsub(",","",comp$Expenses)
+comp$Growth<-gsub("%","",comp$Growth)
+
+comp$Revenue<-as.numeric(comp$Revenue)
+comp$Expenses<-as.numeric(comp$Expenses)
+comp$Growth<-as.numeric(comp$Growth)
+str(comp)
+#Profit 계산
+comp$Profit<-comp$Revenue-comp$Expenses
+comp$Profit
+str(comp)
+a<-arrange(comp,Profit,Expenses)
+filter(a,Profit>0)
+subset(comp,Profit>1900000,select=c(State,Industry))
+tapply(comp$Profit,comp$Industry,mean)
+tapply(comp$Profit,comp$Industry,mean,na.rm=TRUE)
+sum(is.na(comp))
+#Employees 값
+tapply(comp$Employees,comp$Industry,median)
+
+#a<-subset(comp,is.na(comp$Employees))
+#b<-filter(a,Industry=="IT Services")
+#count(b)
+#b
+
+#c<-subset(comp,is.na(comp$Employees))
+#d<-filter(c,Industry=="Health")
+#count(d)
+#b
+
+#c<-subset(comp,is.na(comp$Employees))
+#d<-filter(c,Industry=="Governmnet Services")
+#count(d)
+#d
+#c<-comp[is.na(comp$Employees),]
+#d<-filter(c,Industry=="Retail")
+#count(d)
+
+#c<-comp[is.na(comp$Employees),]
+#d<-filter(c,Industry=="Financial Services")
+#count(d)
+#c
+
+#c<-comp[is.na(comp$Employees),]
+#d<-filter(c,Industry=="Government Services")
+#count(d)
+#c
+
+#c<-comp[is.na(comp$Employees),]
+#d<-filter(c,Industry=="Construction")
+#count(d)
+
+#Employees 대체
+a<-tapply(comp$Employees,comp$Industry,median,na.rm=TRUE)
+a
+#Employess NA중에서 Construction
+#comp[is.na(comp$Employees),]
+#a<-comp[is.na(comp$Employees),]
+#b<-filter(a,Industry=="Construction")
+#b
+comp[is.na(comp$Employees)&comp$Industry=="Construction",]
+comp[is.na(comp$Employees)&comp$Industry=="Construction","Employees"]<-229
+comp[2235,]
+
+#a<-comp[is.na(comp$Employees),]
+#b<-filter(a,Industry=="Retail")
+#b[is.na(b)]<-231.5
+#b
+comp[is.na(comp$Employees)&comp$Industry=="Retail",]
+comp[is.na(comp$Employees)&comp$Industry=="Retail","Employees"]<-231.5
+
+#a<-comp[is.na(comp$Employees),]
+#b<-filter(a,Industry=="Financial Services")
+#b[is.na(b)]<-258
+#b
+
+#a<-comp[is.na(comp$Employees),]
+#b<-filter(a,Industry=="Government Services")
+#b[is.na(b)]<-247.5
+#b
+
+#a<-comp[is.na(comp$Employees),]
+#b<-filter(a,Industry=="IT Services")
+#b[is.na(b)]<-233
+#b
+
+comp[is.na(comp$Employees)&comp$Industry=="IT Services",]
+comp[is.na(comp$Employees)&comp$Industry=="IT Services","Employees"]<-233
+comp[is.na(comp$Employees)&comp$Industry=="Financial Services","Employees"]<-258
+comp[is.na(comp$Employees)&comp$Industry=="Software","Employees"]<-225.0
+comp[is.na(comp$Employees)&comp$Industry=="Government Services","Employees"]<-247.5
+
+#State NA값 변환
+#a<-comp[is.na(comp$State),]
+#b<-filter(a,City=="New York")
+#b
+comp[is.na(comp$State)&comp$City=="New York","State"]<-"NY"
+comp[is.na(comp$State)&comp$City=="Santa Barbara","State"]<-"SB"
+comp[is.na(comp$State)&comp$City=="San Francisco","State"]<-"SFO"
+comp[is.na(comp$State)&comp$City=="Chicago","State"]<-"CG"
+comp[is.na(comp$State)&comp$City=="Dallas","State"]<-"DA"
+comp[is.na(comp$State),]          
+
+#잘못 입렵된 변수 빼기기
+#comp<-subset(comp,select=-c(States))
+str(comp)
+#Revenue
+max(comp$Revenue,na.rm=TRUE)
+min(comp$Revenue,na.rm=TRUE)
+max(comp$Employees,na.rm=TRUE)
+min(comp$Employees,na.rm=TRUE)
+comp[is.na(comp$Revenue),]
+comp[is.na(comp$State)&comp$City=="New York","State"]<-"NY"
+comp[is.na(comp$Revenue),]
+options(scipen=999)
+#Employees 0~100,100~200,200~300까지 Revenue mean값 대체
+a<-subset(comp,Employees<100,select=c(Revenue))
+colMeans(a,na.rm=TRUE,dims=1)
+
+b<-subset(comp,100<Employees&Employees<200,select=c(Revenue))
+colMeans(b,na.rm=TRUE,dims=1)
+
+b<-subset(comp,200<Employees&Employees<300,select=c(Revenue))
+colMeans(b,na.rm=TRUE,dims=1)
+
+comp[is.na(comp$Revenue)&comp$Employees<100,"Revenue"]<-10128617
+comp[is.na(comp$Revenue)&100<comp$Employees&comp$Employees<200,"Revenue"]<-10052244
+comp[is.na(comp$Revenue)&200<comp$Employees&comp$Employees<300,"Revenue"]<-9932007
+comp[is.na(comp$Revenue),]
+#확인
+comp[8,8]
+comp[44,8]
+comp[271,8]
+comp[386,8]
+#Employees 구간별 Expenses보기
+comp[is.na(comp$Expenses),]
+b<-subset(comp,0<Employees&Employees<100,select=c(Expenses))
+colMeans(b,na.rm=TRUE,dims=1)
+b<-subset(comp,100<Employees&Employees<200,select=c(Expenses))
+colMeans(b,na.rm=TRUE,dims=1)
+b<-subset(comp,200<Employees&Employees<300,select=c(Expenses))
+colMeans(b,na.rm=TRUE,dims=1)
+b<-subset(comp,300<Employees&Employees<400,select=c(Expenses))
+colMeans(b,na.rm=TRUE,dims=1)
+b<-subset(comp,400<Employees&Employees<500,select=c(Expenses))
+colMeans(b,na.rm=TRUE,dims=1)
+#Expenses대체
+comp[is.na(comp$Expenses)&comp$Employees<100,"Expenses"]<-11021265
+comp[is.na(comp$Expenses)&100<comp$Employees&comp$Employees<200,"Expenses"]<-12540880
+comp[is.na(comp$Expenses)&200<comp$Employees&comp$Employees<300,"Expenses"]<-12535799
+comp[is.na(comp$Expenses)&300<comp$Employees&comp$Employees<400,"Expenses"]<-12897667
+comp[is.na(comp$Expenses)&400<comp$Employees&comp$Employees<500,"Expenses"]<-12991157
+
+comp[8,9]
+comp[17,9]
+comp[44,9]
+comp[508,9]
+comp[517,9]
+comp[544,9]
+comp[690,9]
+comp[699,9]
+comp[726,9]
+comp[1190,9]
+comp$Profit<-comp$Revenue-comp$Expenses
+sum(is.na(comp))
+
+#Growth 대체
+comp[is.na(comp$Growth),]
+tapply(comp$Growth,comp$Industry,median)
+comp[is.na(comp$Growth)&comp$Industry=="Construction","Growth"]<-13
+comp[is.na(comp$Growth)&comp$Industry=="Health","Growth"]<-14
+comp[8,11]
+comp[5861,11]
+
+sum(is.na(comp))
+write.csv(comp,file="처리 후 결과 저장 파일.csv")
+
+
+
+comp %>%
+  ggplot(aes(x=Growth,y=..density..,fill=Industry))+
+  geom_histogram(alpha=0.3)+
+  geom_density(alpha=0.3)+
+  ggtitle("Profit and Industry")+
+  geom_line(stat='density')+
+  theme_minimal()
+
+comp%>%
+  ggplot(aes(x=Profit,y=Growth,color=Industry))+
+  geom_point()+
+  ggtitle("Growth and Profit")+
+  geom_smooth(method='lm',formula=y~x,se=T)
